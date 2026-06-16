@@ -1,0 +1,40 @@
+{
+  "name": "@rollinggo/hotel",
+  "version": "1.2.7",
+  "description": "RollingGo 酒店 CLI 工具 - OAuth 登录 + 酒店预订全流程",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "rgh": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "node --watch dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "hotel",
+    "booking",
+    "travel",
+    "mcp",
+    "oauth",
+    "rollinggo"
+  ],
+  "author": "",
+  "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "commander": "^13.1.0",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.20",
+    "typescript": "^6.0.3"
+  }
+}

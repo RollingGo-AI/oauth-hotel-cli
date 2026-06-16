@@ -1,0 +1,53 @@
+name: Build and Release Executables
+
+on:
+  push:
+    tags:
+      - 'v*' # 当推送 v 打头的 tag 时自动触发打包并发布
+  workflow_dispatch: # 允许在 GitHub 网页端手动触发打包
+
+permissions:
+  contents: write # 允许 Action 创建 Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Compile Executables
+        run: |
+          # 使用 Bun 原生支持，将 Node.js ESM 代码秒级编译为多平台单文件
+          bun build ./dist/index.js --compile --target bun-windows-x64 --outfile rgh-windows.exe
+          bun build ./dist/index.js --compile --target bun-darwin-x64 --outfile rgh-macos
+          bun build ./dist/index.js --compile --target bun-darwin-arm64 --outfile rgh-macos-arm64
+          bun build ./dist/index.js --compile --target bun-linux-x64 --outfile rgh-linux
+
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') # 只有推送 tag 时才真正创建 Release
+        with:
+          files: |
+            rgh-windows.exe
+            rgh-macos
+            rgh-macos-arm64
+            rgh-linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
