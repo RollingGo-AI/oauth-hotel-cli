@@ -10,16 +10,11 @@ import {
   createHotelBooking,
   searchHotelOrders,
 } from './api.js';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { DEFAULTS, PLACE_TYPES } from './constants.js';
 import { checkForUpdates } from './version-check.js';
+import pkg from '../package.json' with { type: 'json' };
 
 const program = new Command();
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const pkg = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf-8'));
 
 program
   .name('rgh')
