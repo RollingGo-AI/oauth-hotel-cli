@@ -97,7 +97,7 @@ export async function login(): Promise<void> {
   const redirectUri = `${OAUTH_SERVER_URL}${OAUTH_ENDPOINTS.CALLBACK}`;
   const scope = 'profile phone email hotel:order:read hotel:order:book hotel:order:cancel';
   const resource = `${MCP_BASE_URL}`;
-  const authUrl = `${OAUTH_AUTHORIZE_URL}?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=S256&scope=${encodeURIComponent(scope)}&resource=${encodeURIComponent(resource)}`;
+  const authUrl = `${OAUTH_AUTHORIZE_URL}?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=S256&scope=${encodeURIComponent(scope)}&resource=${encodeURIComponent(resource)}&prompt=consent`;
 
   // 4. 获取短链接
   let shortUrl = authUrl;
