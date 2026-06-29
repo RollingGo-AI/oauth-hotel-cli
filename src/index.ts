@@ -15,6 +15,9 @@ import { DEFAULTS, PLACE_TYPES } from './constants.js';
 import { checkForUpdates } from './version-check.js';
 import pkg from '../package.json' with { type: 'json' };
 
+// 执行版本检查
+await checkForUpdates();
+
 const program = new Command();
 
 program
