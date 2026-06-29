@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import { execSync } from 'child_process';
 import { login, logout, isLoggedIn, loadToken } from './auth.js';
 import {
   getHotelSearchTags,
@@ -317,6 +318,21 @@ program
       console.log(JSON.stringify(result, null, 2));
     } catch (error: any) {
       console.error('❌ 查询订单失败:', error.message);
+      process.exit(1);
+    }
+  });
+
+// 7. 更新 CLI
+program
+  .command('update')
+  .description('更新 CLI 工具到最新版本')
+  .action(() => {
+    try {
+      console.log('🔄 正在更新 @rollinggo/hotel 到最新版本...');
+      execSync('npm install -g @rollinggo/hotel@latest', { stdio: 'inherit' });
+      console.log('✅ 更新成功！');
+    } catch (error: any) {
+      console.error('❌ 更新失败:', error.message);
       process.exit(1);
     }
   });
