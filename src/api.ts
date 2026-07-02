@@ -57,11 +57,8 @@ export async function searchHotels(params: {
     distanceInMeter?: number;
   };
   hotelTags?: {
-    preferredTags?: string[];
     requiredTags?: string[];
-    excludedTags?: string[];
     preferredBrands?: string[];
-    minRoomSize?: number;
     maxPricePerNight?: number;
   };
 }): Promise<any> {
@@ -131,7 +128,6 @@ export async function createHotelBooking(params: {
     }>;
   }>;
   customerRequest?: string;
-  alipayUrlScene?: 'PC_WEB' | 'MOBILE_WEB';
 }): Promise<any> {
   return request('POST', API_ENDPOINTS.HOTEL_BOOK, params);
 }

@@ -83,8 +83,6 @@ export const DEFAULTS = {
   CURRENCY: 'CNY',
   /** 默认国籍 */
   NATIONALITY: 'CN',
-  /** 默认支付场景 */
-  ALIPAY_SCENE: 'PC_WEB',
 } as const;
 
 // ==================== OAuth 配置 ====================

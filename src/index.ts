@@ -91,9 +91,8 @@ program
   .option('--adult-count <n>', '每间房成人数', String(DEFAULTS.ADULT_COUNT))
   .option('--star-ratings <min,max>', '星级范围')
   .option('--distance-in-meter <m>', '距离限制（米）')
-  .option('--preferred-tag <tag>', '偏好标签（可多次使用）')
   .option('--required-tag <tag>', '必须标签（可多次使用）')
-  .option('--excluded-tag <tag>', '排除标签（可多次使用）')
+  .option('--preferred-brand <brand>', '偏好品牌（可多次使用）')
   .option('--max-price-per-night <price>', '每晚最高价格')
   .action(async (options) => {
     try {
@@ -123,27 +122,21 @@ program
       }
 
       // 收集标签（支持多次使用）
-      const preferredTags = program.opts().preferredTag
-        ? Array.isArray(program.opts().preferredTag)
-          ? program.opts().preferredTag
-          : [program.opts().preferredTag]
-        : [];
       const requiredTags = program.opts().requiredTag
         ? Array.isArray(program.opts().requiredTag)
           ? program.opts().requiredTag
           : [program.opts().requiredTag]
         : [];
-      const excludedTags = program.opts().excludedTag
-        ? Array.isArray(program.opts().excludedTag)
-          ? program.opts().excludedTag
-          : [program.opts().excludedTag]
+      const preferredBrands = program.opts().preferredBrand
+        ? Array.isArray(program.opts().preferredBrand)
+          ? program.opts().preferredBrand
+          : [program.opts().preferredBrand]
         : [];
 
-      if (preferredTags.length || requiredTags.length || excludedTags.length || options.maxPricePerNight) {
+      if (requiredTags.length || preferredBrands.length || options.maxPricePerNight) {
         params.hotelTags = {};
-        if (preferredTags.length) params.hotelTags.preferredTags = preferredTags;
         if (requiredTags.length) params.hotelTags.requiredTags = requiredTags;
-        if (excludedTags.length) params.hotelTags.excludedTags = excludedTags;
+        if (preferredBrands.length) params.hotelTags.preferredBrands = preferredBrands;
         if (options.maxPricePerNight) params.hotelTags.maxPricePerNight = parseFloat(options.maxPricePerNight);
       }
 
@@ -272,7 +265,6 @@ program
   .requiredOption('--last-name <name>', '联系人姓')
   .requiredOption('--email <email>', '联系邮箱')
   .option('--guests <json>', '客人信息 JSON')
-  .option('--scene <scene>', '支付场景：PC_WEB / MOBILE_WEB', DEFAULTS.ALIPAY_SCENE)
   .action(async (options) => {
     try {
       let guestList;
@@ -302,7 +294,6 @@ program
           email: options.email,
         },
         guestList,
-        alipayUrlScene: options.scene,
       });
       console.log(JSON.stringify(result, null, 2));
     } catch (error: any) {
