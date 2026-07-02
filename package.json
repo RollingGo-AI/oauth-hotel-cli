@@ -1,6 +1,6 @@
 {
   "name": "@rollinggo/hotel",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "description": "RollingGo 酒店 CLI 工具 - OAuth 登录 + 酒店预订全流程",
   "type": "module",
   "main": "dist/index.js",
