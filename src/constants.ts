@@ -1,5 +1,3 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 // ==================== API 地址 ====================
 
