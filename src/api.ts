@@ -133,6 +133,19 @@ export async function createHotelBooking(params: {
 }
 
 // 6. 查询订单列表
-export async function searchHotelOrders(): Promise<any> {
-  return request('GET', API_ENDPOINTS.HOTEL_ORDERS);
+export async function searchHotelOrders(params?: {
+  status?: string;
+  dateRange?: {
+    startDate?: string;
+    endDate?: string;
+  };
+}): Promise<any> {
+  return request('POST', API_ENDPOINTS.HOTEL_ORDERS, params || {});
+}
+
+// 7. 查询订单详情
+export async function getHotelOrderDetail(params: {
+  orderNo: string;
+}): Promise<any> {
+  return request('POST', API_ENDPOINTS.HOTEL_ORDER_DETAIL, params);
 }

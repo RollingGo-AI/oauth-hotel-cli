@@ -28,6 +28,8 @@ export const API_ENDPOINTS = {
   HOTEL_BOOK: '/hotelbook',
   /** 查询订单 */
   HOTEL_ORDERS: '/hotelorders',
+  /** 订单详情 */
+  HOTEL_ORDER_DETAIL: '/hotelorderdetail',
 } as const;
 
 // ==================== OAuth 端点 ====================
