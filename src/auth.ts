@@ -82,6 +82,7 @@ export async function login(): Promise<void> {
       body: JSON.stringify({
         session_id: sessionId,
         code_verifier: codeVerifier,
+        client_id: CLIENT_ID,
       }),
     }
   );
