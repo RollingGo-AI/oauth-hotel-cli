@@ -1,5 +1,5 @@
 import { loadToken } from './auth.js';
-import { MCP_BASE_URL, API_ENDPOINTS } from './constants.js';
+import { getMcpBaseUrl, API_ENDPOINTS } from './constants.js';
 
 // 通用请求函数
 async function request(
@@ -21,7 +21,7 @@ async function request(
     headers['Content-Type'] = 'application/json';
   }
 
-  const response = await fetch(`${MCP_BASE_URL}${endpoint}`, {
+  const response = await fetch(`${getMcpBaseUrl()}${endpoint}`, {
     method: method.toUpperCase(),
     headers,
     body: payload ? JSON.stringify(payload) : undefined,

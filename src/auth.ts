@@ -3,12 +3,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import {
-  MCP_BASE_URL,
-  OAUTH_SERVER_URL,
+  getMcpBaseUrl,
+  getOauthServerUrl,
+  getOauthAuthorizeUrl,
+  getClientId,
   OAUTH_ENDPOINTS,
   TOKEN_PATH,
-  OAUTH_AUTHORIZE_URL,
-  CLIENT_ID,
   SHORT_LINK_ENDPOINT,
 } from './constants.js';
 
@@ -67,6 +67,11 @@ export function logout(): void {
 export async function login(): Promise<void> {
   console.log('🔐 开始 OAuth 登录...\n');
 
+  const clientId = getClientId();
+  const oauthServerUrl = getOauthServerUrl();
+  const oauthAuthorizeUrl = getOauthAuthorizeUrl();
+  const mcpBaseUrl = getMcpBaseUrl();
+
   // 1. 生成 PKCE 参数
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = sha256(codeVerifier);
@@ -75,14 +80,14 @@ export async function login(): Promise<void> {
   // 2. 调用中转服务器获取 state
   console.log('📝 正在获取授权 state...');
   const initResponse = await fetch(
-    `${OAUTH_SERVER_URL}${OAUTH_ENDPOINTS.INIT}`,
+    `${oauthServerUrl}${OAUTH_ENDPOINTS.INIT}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         session_id: sessionId,
         code_verifier: codeVerifier,
-        client_id: CLIENT_ID,
+        client_id: clientId,
       }),
     }
   );
@@ -95,15 +100,15 @@ export async function login(): Promise<void> {
   const { state, session_id: pollKey } = (await initResponse.json()) as { state: string; session_id: string };
 
   // 3. 构建授权 URL
-  const redirectUri = `${OAUTH_SERVER_URL}${OAUTH_ENDPOINTS.CALLBACK}`;
+  const redirectUri = `${oauthServerUrl}${OAUTH_ENDPOINTS.CALLBACK}`;
   const scope = 'profile phone email hotel:order:read hotel:order:book hotel:order:cancel';
-  const resource = `${MCP_BASE_URL}`;
-  const authUrl = `${OAUTH_AUTHORIZE_URL}?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=S256&scope=${encodeURIComponent(scope)}&resource=${encodeURIComponent(resource)}&prompt=consent`;
+  const resource = `${mcpBaseUrl}`;
+  const authUrl = `${oauthAuthorizeUrl}?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${encodeURIComponent(state)}&code_challenge=${encodeURIComponent(codeChallenge)}&code_challenge_method=S256&scope=${encodeURIComponent(scope)}&resource=${encodeURIComponent(resource)}&prompt=consent`;
 
   // 4. 获取短链接
   let shortUrl = authUrl;
   try {
-    const shortResponse = await fetch(`${OAUTH_SERVER_URL}${SHORT_LINK_ENDPOINT}`, {
+    const shortResponse = await fetch(`${oauthServerUrl}${SHORT_LINK_ENDPOINT}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: authUrl }),
@@ -132,7 +137,7 @@ export async function login(): Promise<void> {
 
   // 4. 轮询中转服务器获取 token（用短 session_id 作为轮询 key，而非整个 JWT）
   console.log('\n🔄 正在等待用户授权并获取 token...');
-  const tokenUrl = `${OAUTH_SERVER_URL}${OAUTH_ENDPOINTS.TOKEN}?session_id=${encodeURIComponent(pollKey)}`;
+  const tokenUrl = `${oauthServerUrl}${OAUTH_ENDPOINTS.TOKEN}?session_id=${encodeURIComponent(pollKey)}`;
 
   const MAX_RETRIES = 150; // 最多轮询 5 分钟 (150 * 2s)
   for (let i = 0; i < MAX_RETRIES; i++) {

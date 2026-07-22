@@ -2,16 +2,16 @@
 // ==================== API 地址 ====================
 
 /** MCP 服务器地址 */
-export const MCP_BASE_URL = process.env.MCP_BASE_URL || 'https://mcp.rollinggo.cn/mcp';
+export const getMcpBaseUrl = () => process.env.MCP_BASE_URL || 'https://mcp.rollinggo.cn/mcp';
 
 /** OAuth 中转服务器地址 */
-export const OAUTH_SERVER_URL = process.env.OAUTH_SERVER_URL || 'https://rollinggo.store';
+export const getOauthServerUrl = () => process.env.OAUTH_SERVER_URL || 'https://rollinggo.store';
 
 /** OAuth 授权页面地址 */
-export const OAUTH_AUTHORIZE_URL = process.env.OAUTH_AUTHORIZE_URL || 'https://api.rollinggo.cn/oauth2/authorize';
+export const getOauthAuthorizeUrl = () => process.env.OAUTH_AUTHORIZE_URL || 'https://api.rollinggo.cn/oauth2/authorize';
 
 /** OAuth Client ID */
-export const CLIENT_ID = process.env.CLIENT_ID || 'rollinggo-skill';
+export const getClientId = () => process.env.CLIENT_ID || 'rollinggo-skill';
 
 // ==================== API 端点 ====================
 
