@@ -48,7 +48,7 @@ OAUTH_SERVER_URL=https://rollinggo.store
 OAUTH_AUTHORIZE_URL=https://api.rollinggo.cn/oauth2/authorize
 
 # OAuth Client ID
-CLIENT_ID=rollinggo-skill
+CLIENT_ID=rollinggoskill
 ```
 
 ## 命令

@@ -11,7 +11,7 @@ export const getOauthServerUrl = () => process.env.OAUTH_SERVER_URL || 'https://
 export const getOauthAuthorizeUrl = () => process.env.OAUTH_AUTHORIZE_URL || 'https://api.rollinggo.cn/oauth2/authorize';
 
 /** OAuth Client ID */
-export const getClientId = () => process.env.CLIENT_ID || 'rollinggo-skill';
+export const getClientId = () => process.env.CLIENT_ID || 'rollinggoskill';
 
 // ==================== API 端点 ====================
 
