@@ -77,12 +77,8 @@ export const DEFAULTS = {
   CHILD_COUNT: 0,
   /** 默认房间数 */
   ROOM_COUNT: 1,
-  /** 默认国家代码 */
-  COUNTRY_CODE: 'CN',
   /** 默认币种 */
   CURRENCY: 'CNY',
-  /** 默认国籍 */
-  NATIONALITY: 'CN',
 } as const;
 
 // ==================== OAuth 配置 ====================

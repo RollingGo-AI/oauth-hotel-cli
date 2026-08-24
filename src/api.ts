@@ -45,7 +45,6 @@ export async function searchHotels(params: {
   originQuery: string;
   place: string;
   placeType: string;
-  countryCode?: string;
   size?: number;
   checkInParam?: {
     checkInDate?: string;
@@ -79,9 +78,9 @@ export async function getHotelDetail(params: {
     childCount?: number;
     childAgeDetails?: number[];
   };
-  localeParam?: {
-    countryCode?: string;
-    currency?: string;
+  filter?: {
+    cancelPolicy?: string;
+    mealType?: string;
   };
 }): Promise<any> {
   return request('POST', API_ENDPOINTS.HOTEL_DETAIL, params);
@@ -102,10 +101,6 @@ export async function hotelPriceConfirm(params: {
     childCount?: number;
     childAgeDetails?: number[];
   }>;
-  localeParam?: {
-    nationality?: string;
-    currency?: string;
-  };
 }): Promise<any> {
   return request('POST', API_ENDPOINTS.PRICE_CONFIRM, params);
 }

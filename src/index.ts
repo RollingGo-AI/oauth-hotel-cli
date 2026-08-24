@@ -126,7 +126,6 @@ program
   .requiredOption('--origin-query <query>', '用户原始查询语句')
   .requiredOption('--place <place>', '地点名称')
   .requiredOption('--place-type <type>', `地点类型：${PLACE_TYPES.join('/')}`)
-  .option('--country-code <code>', '国家代码')
   .option('--size <n>', '返回数量', String(DEFAULTS.SIZE))
   .option('--check-in-date <date>', '入住日期 YYYY-MM-DD')
   .option('--stay-nights <n>', '入住晚数', String(DEFAULTS.STAY_NIGHTS))
@@ -144,7 +143,6 @@ program
         placeType: options.placeType,
       };
 
-      if (options.countryCode) params.countryCode = options.countryCode;
       if (options.size) params.size = parseInt(options.size);
 
       if (options.checkInDate || options.stayNights || options.adultCount) {
@@ -202,8 +200,8 @@ program
   .option('--adult-count <n>', '每间房成人数', String(DEFAULTS.ADULT_COUNT))
   .option('--child-count <n>', '每间房儿童数', String(DEFAULTS.CHILD_COUNT))
   .option('--child-age <ages>', '儿童年龄（逗号分隔）')
-  .option('--country-code <code>', '国家代码', DEFAULTS.COUNTRY_CODE)
-  .option('--currency <currency>', '币种', DEFAULTS.CURRENCY)
+  .option('--cancel-policy <policy>', '取消政策: CANCELABLE / NON_CANCELABLE')
+  .option('--meal-type <type>', '餐食类型: WITH_BREAKFAST / SINGLE_BREAKFAST / DOUBLE_BREAKFAST / NO_MEAL')
   .action(async (options) => {
     try {
       if (!options.hotelId && !options.name) {
@@ -231,10 +229,11 @@ program
         params.occupancyParam.childAgeDetails = options.childAge.split(',').map(Number);
       }
 
-      params.localeParam = {
-        countryCode: options.countryCode,
-        currency: options.currency,
-      };
+      if (options.cancelPolicy || options.mealType) {
+        params.filter = {};
+        if (options.cancelPolicy) params.filter.cancelPolicy = options.cancelPolicy;
+        if (options.mealType) params.filter.mealType = options.mealType;
+      }
 
       const result = await getHotelDetail(params);
       console.log(JSON.stringify(result, null, 2));
@@ -256,8 +255,6 @@ program
   .requiredOption('--adults <n>', '每间房成人数')
   .option('--children <n>', '每间房儿童数', String(DEFAULTS.CHILD_COUNT))
   .option('--child-age <ages>', '儿童年龄（逗号分隔）')
-  .option('--nationality <code>', '国籍代码', DEFAULTS.NATIONALITY)
-  .option('--currency <currency>', '币种', DEFAULTS.CURRENCY)
   .action(async (options) => {
     try {
       const numOfRooms = parseInt(options.rooms);
@@ -286,10 +283,6 @@ program
           checkOutDate: options.checkOutDate,
         },
         occupancyDetails,
-        localeParam: {
-          nationality: options.nationality,
-          currency: options.currency,
-        },
       });
       console.log(JSON.stringify(result, null, 2));
     } catch (error: any) {
@@ -323,6 +316,7 @@ program
   .option('--last-name <name>', '联系人姓 (可选，默认取首个入住人)')
   .option('--email <email>', '联系邮箱 (国内版必填)')
   .option('--guest <info>', '客人信息: 房间号,名字,姓氏,是否成人 (如: 1,San,Zhang,true)', parseGuestList, [])
+  .option('--customer-request <request>', '客户特殊要求 (如高楼层、无烟房等)')
   .action(async (options) => {
     try {
       let guestList = options.guest;
@@ -357,7 +351,7 @@ program
         process.exit(1);
       }
 
-      const result = await createHotelBooking({
+      const bookingParams: any = {
         referenceNo: options.referenceNo,
         contact: {
           firstName: contactFirstName,
@@ -365,7 +359,13 @@ program
           email: options.email,
         },
         guestList,
-      });
+      };
+
+      if (options.customerRequest) {
+        bookingParams.customerRequest = options.customerRequest;
+      }
+
+      const result = await createHotelBooking(bookingParams);
       console.log(JSON.stringify(result, null, 2));
     } catch (error: any) {
       console.error('下单失败:', error.message);
