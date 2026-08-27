@@ -89,8 +89,9 @@ program
   });
 
 program
-  .command('whoami')
-  .description('查看当前登录状态')
+  .command('status')
+  .aliases(['whoami', 'me'])
+  .description('查看当前登录状态 (别名: whoami, me)')
   .action(() => {
     if (isLoggedIn()) {
       const token = loadToken();
