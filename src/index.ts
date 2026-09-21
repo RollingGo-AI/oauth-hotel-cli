@@ -52,6 +52,8 @@ import {
   createHotelBooking,
   searchHotelOrders,
   getHotelOrderDetail,
+  preCancelHotelBooking,
+  confirmCancelHotelBooking,
 } from './api.js';
 import { DEFAULTS, PLACE_TYPES } from './constants.js';
 import { checkForUpdates } from './version-check.js';
@@ -413,7 +415,59 @@ program
     }
   });
 
-// 8. 初始化配置
+// 8. 预取消订单（查罚金与凭证）
+program
+  .command('pre-cancel [orderNo]')
+  .aliases(['hotel-pre-cancel', 'precancel'])
+  .description('预取消酒店订单（查询取消罚金并获取 10 分钟有效的凭证）')
+  .option('--order-no <orderNo>', '订单号')
+  .action(async (orderNoArg, options) => {
+    try {
+      const orderNo = orderNoArg || options.orderNo;
+      if (!orderNo) {
+        console.error('预取消失败: 必须提供订单号 (如: rgh pre-cancel <orderNo> 或 --order-no <orderNo>)');
+        process.exit(1);
+      }
+      const result = await preCancelHotelBooking({ orderNo });
+      console.log(JSON.stringify(result, null, 2));
+    } catch (error: any) {
+      console.error('预取消失败:', error.message);
+      process.exit(1);
+    }
+  });
+
+// 9. 确认取消订单
+program
+  .command('confirm-cancel')
+  .aliases(['hotel-confirm-cancel', 'cancel'])
+  .description('确认取消酒店订单（不可撤销，需传入 pre-cancel 获取的凭证）')
+  .option('--order-no <orderNo>', '订单号')
+  .option('--booking-id <bookingId>', '预订号 (pre-cancel 返回)')
+  .option('--confirm-id <confirmId>', '取消凭证 ID (pre-cancel 返回)')
+  .option('--description <description>', '可选的取消原因或备注')
+  .action(async (options) => {
+    try {
+      if (!options.orderNo || !options.bookingId || !options.confirmId) {
+        console.error('确认取消失败: 必须提供 --order-no, --booking-id 和 --confirm-id');
+        process.exit(1);
+      }
+      const params: any = {
+        orderNo: options.orderNo,
+        bookingId: options.bookingId,
+        confirmId: options.confirmId,
+      };
+      if (options.description) {
+        params.description = options.description;
+      }
+      const result = await confirmCancelHotelBooking(params);
+      console.log(JSON.stringify(result, null, 2));
+    } catch (error: any) {
+      console.error('确认取消失败:', error.message);
+      process.exit(1);
+    }
+  });
+
+// 10. 初始化配置
 program
   .command('init')
   .description('初始化配置 (自动在用户主目录生成并合并全局 .env 文件，用于配置 MCP 和 OAuth 服务地址等环境变量)')

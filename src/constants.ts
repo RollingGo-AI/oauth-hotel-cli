@@ -30,6 +30,10 @@ export const API_ENDPOINTS = {
   HOTEL_ORDERS: '/hotelorders',
   /** 订单详情 */
   HOTEL_ORDER_DETAIL: '/hotelorderdetail',
+  /** 预取消订单 (查罚金与凭证) */
+  HOTEL_PRE_CANCEL: '/hotelprecancel',
+  /** 确认取消订单 */
+  HOTEL_CONFIRM_CANCEL: '/hotelcancelconfirm',
 } as const;
 
 // ==================== OAuth 端点 ====================

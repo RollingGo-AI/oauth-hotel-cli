@@ -144,3 +144,20 @@ export async function getHotelOrderDetail(params: {
 }): Promise<any> {
   return request('POST', API_ENDPOINTS.HOTEL_ORDER_DETAIL, params);
 }
+
+// 8. 预取消订单（查询取消罚金并获取 confirmId 凭证）
+export async function preCancelHotelBooking(params: {
+  orderNo: string;
+}): Promise<any> {
+  return request('POST', API_ENDPOINTS.HOTEL_PRE_CANCEL, params);
+}
+
+// 9. 确认并执行订单取消
+export async function confirmCancelHotelBooking(params: {
+  orderNo: string;
+  bookingId: string;
+  confirmId: string;
+  description?: string;
+}): Promise<any> {
+  return request('POST', API_ENDPOINTS.HOTEL_CONFIRM_CANCEL, params);
+}
