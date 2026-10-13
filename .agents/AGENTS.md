@@ -27,7 +27,7 @@ RollingGo 酒店 CLI（国内版）— `@rollinggo/hotel`，命令名 `rgh`。Ty
 
 ## 环境变量（.env 查找优先级：系统 > CWD 向上 > 脚本目录向上[Skill 目录] > 全局家目录）
 
-`MCP_BASE_URL`、`OAUTH_SERVER_URL`（默认 `https://rollinggo.store` 中转）、`OAUTH_AUTHORIZE_URL`、`CLIENT_ID`。默认值硬编码在 `constants.ts`。`init` 命令把配置写入 `~/.hotel-cli/.env`。
+`MCP_BASE_URL`、`OAUTH_SERVER_URL`（默认 `https://api.rollinggo.store` 中转）、`OAUTH_AUTHORIZE_URL`、`CLIENT_ID`。默认值硬编码在 `constants.ts`。`init` 命令把配置写入 `~/.hotel-cli/.env`。
 
 ## 命令
 

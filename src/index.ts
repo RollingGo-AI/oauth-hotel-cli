@@ -38,6 +38,15 @@ if (scriptEnv && scriptEnv !== cwdEnv) {
 // 3. 最后加载全局家目录下的 .env（~/.hotel-cli/.env）
 const globalEnvPath = path.join(os.homedir(), '.hotel-cli', '.env');
 if (fs.existsSync(globalEnvPath)) {
+  try {
+    const raw = fs.readFileSync(globalEnvPath, 'utf8');
+    if (/https?:\/\/rollinggo\.store/i.test(raw)) {
+      const updated = raw.replace(/https?:\/\/rollinggo\.store/gi, 'https://api.rollinggo.store');
+      fs.writeFileSync(globalEnvPath, updated, 'utf8');
+    }
+  } catch {
+    // 忽略文件读写异常
+  }
   dotenv.config({ path: globalEnvPath });
 }
 
@@ -516,6 +525,12 @@ program
     try {
       console.log('正在更新 @rollinggo/hotel 到最新版本...');
       execSync('npm install -g @rollinggo/hotel@latest', { stdio: 'inherit' });
+      try {
+        const cacheFile = path.join(os.homedir(), '.hotel-cli', '.version-cache.json');
+        if (fs.existsSync(cacheFile)) {
+          fs.unlinkSync(cacheFile);
+        }
+      } catch {}
       console.log('更新成功！');
     } catch (error: any) {
       console.error('更新失败:', error.message);

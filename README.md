@@ -42,7 +42,7 @@ CLI 工具会自动从以下几个位置查找并加载 `.env` 配置文件（�
 MCP_BASE_URL=https://mcp.rollinggo.cn/mcp
 
 # OAuth 中转服务器地址
-OAUTH_SERVER_URL=https://rollinggo.store
+OAUTH_SERVER_URL=https://api.rollinggo.store
 
 # OAuth 授权页面地址
 OAUTH_AUTHORIZE_URL=https://api.rollinggo.cn/oauth2/authorize
