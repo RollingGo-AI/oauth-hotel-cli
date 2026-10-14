@@ -1,4 +1,27 @@
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// 向上递归查找特定文件名（例如 client_id.txt 或 .client_id）
+function findFileUpwards(startDir: string, filenames: string[]): string | null {
+  try {
+    let dir = path.resolve(startDir);
+    while (true) {
+      for (const name of filenames) {
+        const target = path.join(dir, name);
+        if (fs.existsSync(target) && fs.statSync(target).isFile()) {
+          return target;
+        }
+      }
+      const parent = path.dirname(dir);
+      if (parent === dir) break;
+      dir = parent;
+    }
+  } catch {}
+  return null;
+}
+
 // ==================== API 地址 ====================
 
 /** MCP 服务器地址 */
@@ -16,8 +39,47 @@ export const getOauthServerUrl = () => {
 /** OAuth 授权页面地址 */
 export const getOauthAuthorizeUrl = () => process.env.OAUTH_AUTHORIZE_URL || 'https://api.rollinggo.cn/oauth2/authorize';
 
-/** OAuth Client ID */
-export const getClientId = () => process.env.CLIENT_ID || 'rollinggoskill';
+/**
+ * OAuth Client ID 多层优先级解析链：
+ * 1. 命令行显式传入 (--client-id)
+ * 2. 当前工作目录（CWD）向上递归查找 client_id.txt 或 .client_id
+ * 3. 脚本自身所在目录向上递归查找 client_id.txt 或 .client_id
+ * 4. 系统/环境配置 process.env.CLIENT_ID（含 ~/.hotel-cli/.env 中的持久化配置）
+ * 5. 内建默认值 'rollinggoskill'
+ */
+export const getClientId = (cliOverride?: string): string => {
+  // 优先级 1：CLI 显式传入参数
+  if (cliOverride && cliOverride.trim()) {
+    return cliOverride.trim();
+  }
+
+  // 优先级 2：当前工作目录（CWD）向上递归查找 client_id.txt / .client_id
+  const cwdFile = findFileUpwards(process.cwd(), ['client_id.txt', '.client_id']);
+  if (cwdFile) {
+    try {
+      const content = fs.readFileSync(cwdFile, 'utf8').trim();
+      if (content) return content;
+    } catch {}
+  }
+
+  // 优先级 3：脚本自身目录向上递归查找
+  try {
+    const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+    const scriptFile = findFileUpwards(scriptDir, ['client_id.txt', '.client_id']);
+    if (scriptFile && scriptFile !== cwdFile) {
+      const content = fs.readFileSync(scriptFile, 'utf8').trim();
+      if (content) return content;
+    }
+  } catch {}
+
+  // 优先级 4：环境变量 / .env 加载的配置
+  if (process.env.CLIENT_ID && process.env.CLIENT_ID.trim()) {
+    return process.env.CLIENT_ID.trim();
+  }
+
+  // 优先级 5：内建默认值
+  return 'rollinggoskill';
+};
 
 // ==================== API 端点 ====================
 

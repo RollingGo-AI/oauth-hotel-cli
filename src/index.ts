@@ -83,9 +83,10 @@ program
 program
   .command('login')
   .description('OAuth 登录')
-  .action(async () => {
+  .option('-c, --client-id <id>', '指定客户端 ID (Client ID)，用于渠道合作或品牌定制')
+  .action(async (options) => {
     try {
-      await login();
+      await login(options.clientId);
     } catch (error: any) {
       console.error('登录失败:', error.message);
       process.exit(1);
